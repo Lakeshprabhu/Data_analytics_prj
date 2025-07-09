@@ -1,0 +1,65 @@
+---
+title: "Capstone project _Bellabeat_fitness_tracker"
+author: "Lakesh Prabhu"
+date: "2025-07-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+
+library(tidyverse)
+library(readr)
+
+
+dailyActivity_merged <- read_csv("dataset/mturkfitbit_export_3.12.16-4.11.16/Fitabase Data 3.12.16-4.11.16/dailyActivity_merged.csv")
+
+sleepDay_merged <- read_csv("dataset/mturkfitbit_export_4.12.16-5.12.16/Fitabase Data 4.12.16-5.12.16/sleepDay_merged.csv")
+
+combined_data = merge(dailyActivity_merged,sleepDay_merged,by="Id")
+longdata <- combined_data %>%
+  select(contains("Minutes"), TotalTimeInBed) %>%
+  pivot_longer(
+    cols = -TotalTimeInBed,
+    names_to = "ActivityType",
+    values_to = "Minutes"
+  )
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+
+ggplot(longdata, aes(x = Minutes, y = TotalTimeInBed)) + 
+      geom_point(alpha = 0.2) +
+      geom_smooth(method = "loess", se = FALSE, color = "red") +
+      facet_wrap(~ ActivityType, scales = "free_x") +
+      labs(title = "Relationship Between Activity Types and Sleep", x = "Active Minutes", y = "Total Time in Bed")
+
+
+ggplot(data = combined_data, aes(x = Calories, y = TotalMinutesAsleep)) +
+     geom_point(alpha = 0.3) +
+     geom_smooth(method = "loess", se = FALSE, color = "red") +
+     labs(title = "Calories vs Sleep Duration",
+          x = "Calories Burned",
+          y = "Total Minutes Asleep")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the 
+
+
+
+We conclude there exists no correlation between amount of steps walks or the intensity of the distance covered with the induviduals sleep.
